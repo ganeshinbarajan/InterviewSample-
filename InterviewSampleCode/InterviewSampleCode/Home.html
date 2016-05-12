@@ -7,32 +7,31 @@
 <body>
     <script src="scripts/jquery-2.2.3.js"></script>
     <script src="JsonProcessor.js"></script>
-    <!--
-        <div>
+    <div>
         <label>Enter Node Id:</label>
         <input type="text" name="NodeID" id="NodeID" value="1" />
-        <!--<input type="button" onclick="GetLableInfo()" />
+        <input type="button" onclick="GetLableInfo()" />
     </div>
     <div id="result">
         
     </div>
-    -->
+    
     <script>
-        GetLableInfo();
+        //GetLableInfo();
         function GetLableInfo()
         {
           
-            //var id = $("#NodeID").val();
-            //if ( id== "") {
-            //    alert("Node ID is empty");
-            //    return;
-            //}
+            var id = $("#NodeID").val();
+            if ( id== "") {
+                alert("Node ID is empty");
+                return;
+            }
 
             var response = GetJsonData();
             response.then(function (data) {
 
-                var result = GetLabel(data, 2);
-                //$("#result").html('Lable Name for Id ' + id + ' is ' + result);
+                var result = GetLabel(data, id);
+            $("#result").html('Lable Name for Id ' + id + ' is ' + result);
 
             }, function (err) {
                 console.log('Error occured while loading Json data.:' + err.responseText);
@@ -42,20 +41,55 @@
 
         function GetLabel(data,Id)
         {
-            
-            for (field in data) {               
-                if (typeof (data[field]) == "object")
-                {
-                    GetLabel(data[field], Id)
-                }
-                else
-                {
-                    if (data[field] == Id) {
-                        var result =data['Label'];                        
+            var i,
+                currentChild,
+                result;
+
+            if (Id == data.Id) {
+                return data['Label'];
+            } else {
+                for (field in data) {
+                    if (typeof (data[field]) == "object") {
+                        result = GetLabel(data[field], Id);
+                        if (result != "") return result;
                     }
-                }               
+
+                    if (data[field] == Id) {
+                        result = data['Label'];
+                        return result;
+                    }
+
+                }
             }
+           
              
+        }
+        function findNode(id, currentNode) {
+            var i,
+                currentChild,
+                result;
+
+            if (id == currentNode.id) {
+                return currentNode;
+            } else {
+
+                // Use a for loop instead of forEach to avoid nested functions
+                // Otherwise "return" will not work properly
+                for (i = 0; i < currentNode.children.length; i += 1) {
+                    currentChild = currentNode.children[i];
+
+                    // Search in the current child
+                    result = findNode(id, currentChild);
+
+                    // Return the result if the node has been found
+                    if (result !== false) {
+                        return result;
+                    }
+                }
+
+                // The node has not been found and we have no more options
+                return false;
+            }
         }
         
     </script>
