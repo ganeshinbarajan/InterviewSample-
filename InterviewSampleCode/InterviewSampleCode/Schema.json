@@ -1,10 +1,12 @@
 ﻿{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "JSON Schema for Tree Structure",
   "type": "object",
   "properties": {
     "Id": {
       "description": "Node ID",
       "type": "integer",
-      "required": "true"
+      "required": [ "true" ]
     },
     "Label": {
       "description": "Label Name",
@@ -14,9 +16,9 @@
       "description": "List of Child Nodes",
       "type": "array",
       "items": {
-        "$ref" : "#"
-      } 
-    }      
-  }
-
+        "$ref": "#"
+      }
+    }
+  },
+  "required": [ "Id" ]
 }

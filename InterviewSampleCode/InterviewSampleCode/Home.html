@@ -30,67 +30,37 @@
             var response = GetJsonData();
             response.then(function (data) {
 
-                var result = GetLabel(data, id);
+                var result = getLabelById(data, parseInt(id));
             $("#result").html('Lable Name for Id ' + id + ' is ' + result);
 
             }, function (err) {
                 console.log('Error occured while loading Json data.:' + err.responseText);
             });
         }
+
+        function getLabelById(jsonData, id) {
+            var result = pickObject(jsonData, function (jsonData) {
+                return id === jsonData.Id;
+            });
+            if (result) return result.Label;
+        }
+
+        function pickObject(jsonData, condition) {
+            var key, result;
+
+            if (typeof jsonData !== "object" || jsonData === null) return;
+            if (condition(jsonData)) return jsonData;
+
+            for (key in jsonData) {
+                if (!jsonData.hasOwnProperty(key)) continue;
+                result = pickObject(jsonData[key], condition);
+                if (result) return result;
+            }
+        }
+
         
 
-        function GetLabel(data,Id)
-        {
-            var i,
-                currentChild,
-                result;
-
-            if (Id == data.Id) {
-                return data['Label'];
-            } else {
-                for (field in data) {
-                    if (typeof (data[field]) == "object") {
-                        result = GetLabel(data[field], Id);
-                        if (result != "") return result;
-                    }
-
-                    if (data[field] == Id) {
-                        result = data['Label'];
-                        return result;
-                    }
-
-                }
-            }
-           
-             
-        }
-        function findNode(id, currentNode) {
-            var i,
-                currentChild,
-                result;
-
-            if (id == currentNode.id) {
-                return currentNode;
-            } else {
-
-                // Use a for loop instead of forEach to avoid nested functions
-                // Otherwise "return" will not work properly
-                for (i = 0; i < currentNode.children.length; i += 1) {
-                    currentChild = currentNode.children[i];
-
-                    // Search in the current child
-                    result = findNode(id, currentChild);
-
-                    // Return the result if the node has been found
-                    if (result !== false) {
-                        return result;
-                    }
-                }
-
-                // The node has not been found and we have no more options
-                return false;
-            }
-        }
+        
         
     </script>
 </body>
